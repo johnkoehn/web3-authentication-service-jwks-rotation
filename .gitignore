@@ -1,2 +1,3 @@
 node_modules
 cloudformation-lambda.yaml
+test.js

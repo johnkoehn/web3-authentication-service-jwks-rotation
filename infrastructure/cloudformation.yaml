@@ -17,6 +17,9 @@ Parameters:
   EcsServiceName:
     Type: String
     Description: The name of the ECS service running the authentication API
+  DistributionId:
+    Type: String
+    Descirption: The distribution id
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -84,6 +87,10 @@ Resources:
       MemorySize: 256
       Role: !GetAtt LambdaRole.Arn
       Timeout: 600 # 10 minutes
+      Environment:
+        Variables:
+          JWKS_BUCKET: !Ref S3BucketName
+          DISTRIBUTION_ID: !Ref DistributionId
   SecretsManagerInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:

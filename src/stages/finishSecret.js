@@ -1,10 +1,8 @@
-const { SecretsManagerClient, DescribeSecretCommand, UpdateSecretVersionStageCommand } = require('@aws-sdk/client-secrets-manager');
+const { DescribeSecretCommand, UpdateSecretVersionStageCommand } = require('@aws-sdk/client-secrets-manager');
+const client = require('../util/getSecretsManagerClient')();
 
 const finishSecret = async (event) => {
     const secretId = event.SecretId;
-    const client = new SecretsManagerClient({
-        region: process.env.AWS_REGION
-    });
 
     const describeSecretCommand = new DescribeSecretCommand({
         SecretId: secretId
