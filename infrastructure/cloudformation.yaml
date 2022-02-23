@@ -71,16 +71,9 @@ Resources:
                 - !Sub arn:aws:s3:::${S3BucketName}/*
                 - !Sub arn:aws:s3:::${S3BucketName}
             - Action:
-                - ecs:UpdateService
-                - ecs:ListTagsForResource
-                - ecs:DescribeServices
-                - ecs:DescribeClusters
-                - ecs:ListAccountSettings
-                - ecs:DescribeTaskDefinition
-              Effect: "Allow"
-              Resource:
-                - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${EcsServiceName}"
-                - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${EcsServiceName}/${EcsServiceName}"
+                - ecs:*
+              Effect: Allow
+              Resource: '*'
   AwsLambda:
     Type: AWS::Lambda::Function
     Properties:

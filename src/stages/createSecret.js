@@ -9,7 +9,7 @@ const createSecret = async (event) => {
     const secretId = event.SecretId;
 
     const secrets = await getSecrets(secretId, 'AWSCURRENT');
-    const newKey = await keyStore.generate('RSA', 2048, { alg: 'RS256', use: 'sig' });
+    const newKey = (await keyStore.generate('RSA', 2048, { alg: 'RS256', use: 'sig' })).toJSON(true);
 
     const newSecrets = {
         keys: [
