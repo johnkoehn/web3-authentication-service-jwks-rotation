@@ -17,6 +17,9 @@ Parameters:
   EcsServiceName:
     Type: String
     Description: The name of the ECS service running the authentication API
+  EcsClusterName:
+    Type: String
+    Description: The name of the ECS cluster
   DistributionId:
     Type: String
     Description: The distribution id
@@ -95,6 +98,7 @@ Resources:
           DISTRIBUTION_ID: !Ref DistributionId
           BASE_AUTH_URL: !Ref BaseAuthUrl
           ECS_SERVICE_NAME: !Ref EcsServiceName
+          ECS_CLUSTER_NAME: !Ref EcsClusterName
   SecretsManagerInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:

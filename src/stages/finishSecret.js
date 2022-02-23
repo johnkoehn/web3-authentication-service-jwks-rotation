@@ -1,4 +1,5 @@
 const { DescribeSecretCommand, UpdateSecretVersionStageCommand } = require('@aws-sdk/client-secrets-manager');
+const { ECSClient, UpdateServiceCommand } = require('@aws-sdk/client-ecs');
 const client = require('../util/getSecretsManagerClient')();
 
 const finishSecret = async (event) => {
@@ -23,6 +24,14 @@ const finishSecret = async (event) => {
     await client.send(updateVersionCommand);
 
     // reset ECS Service
+    const ecsClient = new ECSClient({ region: process.env.AWS_REGION });
+    const resetTasksCommand = new UpdateServiceCommand({
+        service: process.env.ECS_SERVICE_NAME,
+        forceNewDeployment: true,
+        cluster: process.env.ECS_CLUSTER_NAME
+    });
+
+    await ecsClient.send(resetTasksCommand);
 };
 
 module.exports = finishSecret;
