@@ -19,7 +19,10 @@ Parameters:
     Description: The name of the ECS service running the authentication API
   DistributionId:
     Type: String
-    Descirption: The distribution id
+    Description: The distribution id
+  BaseAuthUrl:
+    Type: String
+    Description: The base url of the authentication service
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -53,9 +56,8 @@ Resources:
               Effect: Allow
               Resource: !Ref SecretName
             - Action:
-                - cloudfront:GetDistribution
-                - cloudfront:GetDistributionConfig
-                - cloudfront:UpdateDistribution
+                - cloudfront:CreateInvalidation
+                - cloudfront:GetInvalidation
               Resource: !Ref CloudFrontDistributionArn
               Effect: Allow
             - Action:
@@ -91,6 +93,8 @@ Resources:
         Variables:
           JWKS_BUCKET: !Ref S3BucketName
           DISTRIBUTION_ID: !Ref DistributionId
+          BASE_AUTH_URL: !Ref BaseAuthUrl
+          ECS_SERVICE_NAME: !Ref EcsServiceName
   SecretsManagerInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
