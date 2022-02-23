@@ -26,7 +26,11 @@
     "author": "AWOOZ",
     "license": "ISC",
     "dependencies": {
-        "aws-sdk": "^2.1077.0",
-        "node-fetch": "^2.6.6"
+        "@aws-sdk/client-cloudfront": "^3.52.0",
+        "@aws-sdk/client-ecs": "^3.52.0",
+        "@aws-sdk/client-s3": "^3.52.0",
+        "@aws-sdk/client-secrets-manager": "^3.52.0",
+        "node-fetch": "^2.6.6",
+        "node-jose": "^2.1.0"
     }
 }

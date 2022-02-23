@@ -17,6 +17,15 @@ Parameters:
   EcsServiceName:
     Type: String
     Description: The name of the ECS service running the authentication API
+  EcsClusterName:
+    Type: String
+    Description: The name of the ECS cluster
+  DistributionId:
+    Type: String
+    Description: The distribution id
+  BaseAuthUrl:
+    Type: String
+    Description: The base url of the authentication service
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -50,9 +59,8 @@ Resources:
               Effect: Allow
               Resource: !Ref SecretName
             - Action:
-                - cloudfront:GetDistribution
-                - cloudfront:GetDistributionConfig
-                - cloudfront:UpdateDistribution
+                - cloudfront:CreateInvalidation
+                - cloudfront:GetInvalidation
               Resource: !Ref CloudFrontDistributionArn
               Effect: Allow
             - Action:
@@ -63,16 +71,9 @@ Resources:
                 - !Sub arn:aws:s3:::${S3BucketName}/*
                 - !Sub arn:aws:s3:::${S3BucketName}
             - Action:
-                - ecs:UpdateService
-                - ecs:ListTagsForResource
-                - ecs:DescribeServices
-                - ecs:DescribeClusters
-                - ecs:ListAccountSettings
-                - ecs:DescribeTaskDefinition
-              Effect: "Allow"
-              Resource:
-                - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${EcsServiceName}"
-                - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${EcsServiceName}/${EcsServiceName}"
+                - ecs:*
+              Effect: Allow
+              Resource: '*'
   AwsLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -84,5 +85,17 @@ Resources:
       MemorySize: 256
       Role: !GetAtt LambdaRole.Arn
       Timeout: 600 # 10 minutes
-
+      Environment:
+        Variables:
+          JWKS_BUCKET: !Ref S3BucketName
+          DISTRIBUTION_ID: !Ref DistributionId
+          BASE_AUTH_URL: !Ref BaseAuthUrl
+          ECS_SERVICE_NAME: !Ref EcsServiceName
+          ECS_CLUSTER_NAME: !Ref EcsClusterName
+  SecretsManagerInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref AwsLambda
+      Action: lambda:InvokeFunction
+      Principal: secretsmanager.amazonaws.com
 
